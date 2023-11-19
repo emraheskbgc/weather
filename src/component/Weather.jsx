@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
+import RightCol from "./RightCol";
 
 const Weather = () => {
   const apiKey = process.env.REACT_APP_API_KEY;
@@ -7,13 +8,12 @@ const Weather = () => {
   const inputFocusRef = useRef(null);
   const [city, setCity] = useState("Ankara");
   const [weatherData, setWeatherData] = useState({});
-  const [days, setDays] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://api.openweathermap.org/data/2.5/forecast?q=${city}&lang=tr&units=metric&cnt=5&appid=${apiKey}`
+          `https://api.openweathermap.org/data/2.5/forecast?q=${city}&lang=tr&units=metric&cnt=40&appid=${apiKey}`
         );
         setWeatherData(response.data);
       } catch (error) {
@@ -29,12 +29,6 @@ const Weather = () => {
     e.preventDefault();
     setCity(e.target.value);
   };
-  console.log(
-    weatherData.list &&
-      weatherData.list[0] &&
-      weatherData.list[0].weather[0] &&
-      weatherData.list[0].weather[0].description
-  );
 
   useEffect(() => {
     if (hiddenImg === false) {
@@ -50,37 +44,24 @@ const Weather = () => {
     setHiddenImg(true);
   };
 
-  useEffect(() => {
-    if (weatherData && weatherData.list) {
-      const dayNames = [
-        "Pazar",
-        "Pazartesi",
-        "Salı",
-        "Çarşamba",
-        "Perşembe",
-        "Cuma",
-        "Cumartesi",
-      ];
-      const days = weatherData.list.reduce((acc, data) => {
-        const date = new Date(data.dt * 1000);
-        const dayName = dayNames[date.getDay()];
-        if (!acc[dayName]) {
-          acc[dayName] = [];
-        }
-        acc[dayName].push(data);
-        return acc;
-      }, {});
-      setDays(days);
-      console.log(days);
-    }
-  }, [weatherData]);
-
   const weatherIcon =
     weatherData.list &&
     weatherData.list[0] &&
     weatherData.list[0].weather[0] &&
     weatherData.list[0].weather[0].icon;
   const iconUrl = `https://openweathermap.org/img/wn/${weatherIcon}.png`;
+  const dateDay =
+    weatherData.list &&
+    weatherData.list[0] &&
+    weatherData.list[0].dt_txt.slice(8, 10);
+  const dateMonth =
+    weatherData.list &&
+    weatherData.list[0] &&
+    weatherData.list[0].dt_txt.slice(5, 7);
+  const dateYear =
+    weatherData.list &&
+    weatherData.list[0] &&
+    weatherData.list[0].dt_txt.slice(0, 4);
 
   return (
     <>
@@ -116,15 +97,16 @@ const Weather = () => {
           <div className="weather-side col ">
             <div className="day">
               {weatherData && weatherData.city && weatherData.city.name}
-              <span style={{ fontSize: "12px" }}>
-                {" "}
+              <span style={{ fontSize: "12px", paddingLeft: "5px" }}>
                 {weatherData && weatherData.city && weatherData.city.country}
               </span>
               <br />
-              {days &&
-                Object.keys(days).map((item, index) => (
-                  <p key={index}>{item}</p>
-                ))}
+            </div>
+            <div className="date">
+              <p>
+                {`${dateDay} / ${dateMonth}
+                 / ${dateYear} `}
+              </p>
             </div>
 
             <div className="statusImg">
@@ -148,7 +130,9 @@ const Weather = () => {
                 weatherData.list[0].weather[0].description.toUpperCase()}
             </div>
           </div>
-          <div className="col">col2</div>
+          <div className="col">
+            <RightCol weatherData={weatherData} />
+          </div>
         </div>
       </div>
     </>

@@ -88,12 +88,14 @@ body{
     font-weight: 450;
     margin-top: 5px;
     margin-left: 5px;
+    
   }
-  .day>p{
-    font-size: 15px;
-    margin-left: 5px;
-    margin-top: -10px;
-  }
+ .date{
+  font-size: 15px;
+  font-weight: 500;
+  margin-left: 5px;
+  color:black;
+ }
   .location{
     font-size: 25px;
     margin-left: 7px;
@@ -125,4 +127,9 @@ body{
   width: 100px;
  }
 
-  
+ .divDesign div{
+  width: 50%;
+  height: 150px;
+  text-align: center;
+ }
+ 
